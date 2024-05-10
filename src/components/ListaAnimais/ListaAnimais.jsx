@@ -1,3 +1,4 @@
+import { FaTrash } from "react-icons/fa";
 import Table from 'react-bootstrap/Table';
 import { useState, useEffect } from 'react';
 import AnimalRequests from '../../fetch/AnimalRequests';
@@ -51,7 +52,7 @@ function ListaAnimais() {
                             <td>{animal.idadeanimal}</td>
                             <td>{animal.generoanimal}</td>
                             <td>{animal.envergadura}</td>
-                            <th onClick={() => deletarAnimal(animal.idanimal)}>Deletar</th>
+                            <th onClick={() => deletarAnimal(animal.idanimal)}><FaTrash/></th>
                         </tr>
                     ))
                 ) : (
