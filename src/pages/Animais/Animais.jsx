@@ -1,45 +1,57 @@
+import './Animais.css'
+import React, { useEffect, useState } from 'react';
 import Navegacao from '../../components/Navegacao/Navegacao';
 import CardAnimal from '../../components/CardAnimal/CardAnimal';
-import './Animais.css'
-import { useEffect, useState } from "react";
 
 function Animais() {
 
-    // useState é um Hook responsável por manipular variáveis no React
-    // Criando um array que vai receber do back-end as informações sobre os animais (nome, idade, genero, etc)
-    const [animais, setAnimais] = useState([]);
+    // RECUPERANDO LISTA DE ANIMAIS DO SERVIDOR
+    const [animais, setAnimais] = useState(null);
 
-    // useEffect é um Hook responsável por fazer uma conexão de rede com algum recurso (banco de dados, API, etc)
+    // Recupera a lista de todos os animais do servidor
     useEffect(() => {
-        // Cria uma arrow funcition que vai fazer a consulta dos dados na API
+        // função para fazer o fetch (busca) das informações na API
         const fetchData = async () => {
+            // tenta fazer aa busca
             try {
-                // Faz a consulta (fetch) na API e retorna a resposta para a variável response
-                const response = await fetch('http://localhost:3000/list/aves');
-                // Verifica se o status da responsa deu alguma problema
+                // Faz a busca e armazena o resultado em response
+                const response = await fetch('http://localhost:3000/listar-aves');
+                // verifica se o estado da response (ok) é falso
                 if (!response.ok) {
-                    // Se deu problema, irá lançar um erro
+                    // caso seja falso, houve algum erro na requisição, e o erro é lançado
                     throw new Error('Erro ao buscar servidor');
                 }
-                // Se a consulta foi feita com sucesso, vai pegar as informações, transformar em um JSON 
-                // e armazenas na variável listaAnimais
+                // caso a busca seja bem sucedida, o resultado é convertido em um JSON e armazenado
+                // na variável listaAnimais
                 const listaAnimais = await response.json();
-                // Usa o método setAnimais para atribuir o valor da variável listaAnimais para a variável animal
+                // atribui o valor de listaAnimais a variável animais
+                // usando o setAnimais
                 setAnimais(listaAnimais);
+                // caso haja algum erro na busca, é disparado o catch
             } catch (error) {
-                // Caso aconteceça algum erro durante o processo, é lançada uma excesão
+                // escreve o erro no console
                 console.error('Erro: ', error);
             }
         }
 
-        // Chama a função para recuperar os dados dos animais do back-end
+        // executa a função fetchData
         fetchData();
     }, []);
 
-    return(
+
+    return (
         <>
             <Navegacao />
-            <CardAnimal />
+            <div className='ctn-animais'>
+                {animais ? (
+                    // Renderize o seu componente para cada item da lista
+                    animais.map(animal => (
+                        <CardAnimal key={animal.idanimal} animal={animal} />
+                    ))
+                ) : (
+                    <p>Carregando... Verifique se o servidor está funcionando</p>
+                )}
+            </div>
         </>
     );
 }
